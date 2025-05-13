@@ -13,7 +13,6 @@
 #define LINHAS 3
 #define COLUNAS 80
 
-// Estruturas
 typedef struct Obstaculo {
     int x, y;
     char tipo;
@@ -144,6 +143,22 @@ int main() {
     SetTargetFPS(60);
     srand(time(NULL));
 
+    // ⬇️ Carregar imagem de fundo do menu
+    Texture2D fundo = LoadTexture("floresta.png");
+
+    // ⬇️ Tela de menu inicial
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        DrawTexture(fundo, 0, 0, WHITE);
+
+        DrawText("Jogo do Tigrinho", LARGURA_TELA/2 - MeasureText("Jogo do Tigrinho", 40)/2, ALTURA_TELA/2 - 60, 40, DARKBLUE);
+        DrawText("Pressione ENTER para comecar", LARGURA_TELA/2 - MeasureText("Pressione ENTER para comecar", 20)/2, ALTURA_TELA/2, 20, BLACK);
+
+        EndDrawing();
+
+        if (IsKeyPressed(KEY_ENTER)) break;
+    }
+
     while (!WindowShouldClose()) {
         inicializar_jogo();
 
@@ -195,15 +210,22 @@ int main() {
         while (!WindowShouldClose()) {
             BeginDrawing();
             ClearBackground(RAYWHITE);
-            DrawText("GAME OVER", LARGURA_TELA/2 - 100, ALTURA_TELA/2 - 40, 40, RED);
-            DrawText(TextFormat("Pontuacao Final: %d", pontuacao), LARGURA_TELA/2 - 100, ALTURA_TELA/2 + 10, 20, BLACK);
-            DrawText("Pressione ENTER para jogar novamente ou ESC para sair", LARGURA_TELA/2 - 200, ALTURA_TELA/2 + 40, 20, GRAY);
+
+            DrawText("GAME OVER", LARGURA_TELA/2 - MeasureText("GAME OVER", 40)/2, ALTURA_TELA/2 - 40, 40, RED);
+            DrawText(TextFormat("Pontuacao Final: %d", pontuacao), LARGURA_TELA/2 - MeasureText(TextFormat("Pontuacao Final: %d", pontuacao), 20)/2, ALTURA_TELA/2 + 10, 20, BLACK);
+
+            const char *mensagem = "Pressione ENTER para jogar novamente ou ESC para sair";
+            int largura_texto = MeasureText(mensagem, 20);
+            DrawText(mensagem, LARGURA_TELA/2 - largura_texto/2, ALTURA_TELA/2 + 40, 20, GRAY);
+
             EndDrawing();
+
             if (IsKeyPressed(KEY_ENTER)) {
                 game_over = 0;
                 break;
             }
             if (IsKeyPressed(KEY_ESCAPE)) {
+                UnloadTexture(fundo);
                 CloseWindow();
                 free(tigrinho);
                 return 0;
@@ -211,6 +233,7 @@ int main() {
         }
     }
 
+    UnloadTexture(fundo);
     CloseWindow();
     free(tigrinho);
     return 0;
