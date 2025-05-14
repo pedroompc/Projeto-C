@@ -9,7 +9,7 @@
 #define TIGRINHO_X 100
 #define ALTURA_PULO 80
 #define DURACAO_PULO 20
-#define DURACAO_ABAIXADO 10
+#define DURACAO_ABAIXADO 10 // Não será mais usado diretamente
 #define LINHAS 3
 #define COLUNAS 80
 
@@ -32,7 +32,7 @@ Obstaculo *lista = NULL;
 int pontuacao = 0;
 int recorde = 0;
 int game_over = 0;
-int velocidade_jogo = 6;
+float velocidade_jogo = 6.0f;
 int dificuldade = 1;
 int mapa[LINHAS][COLUNAS];
 
@@ -53,7 +53,7 @@ void inicializar_jogo() {
 
     pontuacao = 0;
     game_over = 0;
-    velocidade_jogo = 6;
+    velocidade_jogo = 6.0f;
     dificuldade = 1;
 
     FILE *arq = fopen("recorde.txt", "r");
@@ -76,32 +76,50 @@ void atualizar_tigrinho() {
             tigrinho->y = POSICAO_CHAO;
         }
     }
-    if (tigrinho->abaixado) {
-        tigrinho->tempo_abaixado++;
-        if (tigrinho->tempo_abaixado > DURACAO_ABAIXADO) {
-            tigrinho->abaixado = 0;
-            tigrinho->tempo_abaixado = 0;
-        }
-    }
 }
 
 void criar_obstaculo() {
     int chance = 35 - dificuldade * 3;
     if (chance < 10) chance = 10;
-    if (GetRandomValue(0, chance) == 0) {
-        Obstaculo *novo = (Obstaculo *)malloc(sizeof(Obstaculo));
-        novo->x = LARGURA_TELA;
-        novo->prox = lista;
 
-        if (GetRandomValue(0, 9) < 3 + dificuldade) {
-            novo->tipo = 'G';
-            novo->y = POSICAO_CHAO - 40;
-        } else {
-            novo->tipo = 'A';
-            novo->y = POSICAO_CHAO;
+    int espaco_minimo_entre_obstaculos = 200; // Espaço mínimo desejado entre qualquer obstáculo
+    int largura_obstaculo = 20; // Largura do obstáculo
+
+    Obstaculo *ultimo = NULL;
+    for (Obstaculo *o = lista; o != NULL; o = o->prox) {
+        ultimo = o;
+    }
+
+    int posicao_ultimo_obstaculo = (ultimo != NULL) ? ultimo->x : 0;
+
+    // Verifica se há espaço suficiente para tentar criar um novo obstáculo
+    if (LARGURA_TELA - posicao_ultimo_obstaculo > espaco_minimo_entre_obstaculos / 2 + largura_obstaculo) {
+        if (GetRandomValue(0, chance) == 0) {
+            int pode_criar = 1;
+            // Verifica a distância para todos os obstáculos existentes
+            for (Obstaculo *o = lista; o != NULL; o = o->prox) {
+                if (abs(o->x - LARGURA_TELA) < espaco_minimo_entre_obstaculos + largura_obstaculo) {
+                    pode_criar = 0;
+                    break;
+                }
+            }
+
+            if (pode_criar) {
+                Obstaculo *novo = (Obstaculo *)malloc(sizeof(Obstaculo));
+                novo->x = LARGURA_TELA;
+                novo->prox = lista;
+
+                if (GetRandomValue(0, 9) < 3 + dificuldade) {
+                    novo->tipo = 'G';
+                    novo->y = POSICAO_CHAO - 30; // Ajuste na posição Y do obstáculo aéreo
+                } else {
+                    novo->tipo = 'A';
+                    novo->y = POSICAO_CHAO;
+                }
+
+                lista = novo;
+            }
         }
-
-        lista = novo;
     }
 }
 
@@ -121,20 +139,31 @@ void atualizar_obstaculos() {
 
 int verificar_colisao() {
     for (Obstaculo *o = lista; o != NULL; o = o->prox) {
-        if (o->x < tigrinho->x + 40 && o->x + 20 > tigrinho->x && o->y == tigrinho->y) {
-            if ((o->tipo == 'A' && !tigrinho->pulando) ||
-                (o->tipo == 'G' && !tigrinho->abaixado)) return 1;
+        // Colisão horizontal
+        if (o->x < tigrinho->x + 40 && o->x + 20 > tigrinho->x) {
+            // Colisão com obstáculo baixo ('A')
+            if (o->tipo == 'A' && !tigrinho->pulando && tigrinho->y == POSICAO_CHAO) {
+                return 1;
+            }
+            // Colisão com obstáculo alto ('G')
+            else if (o->tipo == 'G' && !tigrinho->abaixado) {
+                // Verifica se a parte superior do tigrinho (parado) está abaixo da parte inferior do obstáculo voador
+                if (tigrinho->y < o->y + 40) {
+                    return 1;
+                }
+            }
         }
     }
     return 0;
 }
 
 void atualizar_dificuldade() {
-    int nova = 1 + (pontuacao / 500);
-    if (nova > dificuldade) {
-        dificuldade = nova;
-        velocidade_jogo++;
-        if (velocidade_jogo > 15) velocidade_jogo = 15;
+    int nova_dificuldade = 1 + (pontuacao / 500);
+    if (nova_dificuldade > dificuldade) {
+        // Aumenta a velocidade em 10%
+        velocidade_jogo *= 1.10f;
+        dificuldade = nova_dificuldade;
+        if (velocidade_jogo > 25.0f) velocidade_jogo = 25.0f; // Limite de velocidade
     }
 }
 
@@ -143,21 +172,7 @@ int main() {
     SetTargetFPS(60);
     srand(time(NULL));
 
-    // ⬇️ Carregar imagem de fundo do menu
-    Texture2D fundo = LoadTexture("floresta.png");
-
-    // ⬇️ Tela de menu inicial
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        DrawTexture(fundo, 0, 0, WHITE);
-
-        DrawText("Jogo do Tigrinho", LARGURA_TELA/2 - MeasureText("Jogo do Tigrinho", 40)/2, ALTURA_TELA/2 - 60, 40, DARKBLUE);
-        DrawText("Pressione ENTER para comecar", LARGURA_TELA/2 - MeasureText("Pressione ENTER para comecar", 20)/2, ALTURA_TELA/2, 20, BLACK);
-
-        EndDrawing();
-
-        if (IsKeyPressed(KEY_ENTER)) break;
-    }
+    Texture2D fundo = LoadTexture("florestapixe.jpg");
 
     while (!WindowShouldClose()) {
         inicializar_jogo();
@@ -167,9 +182,11 @@ int main() {
                 tigrinho->pulando = 1;
                 tigrinho->tempo_pulo = 0;
             }
-            if (IsKeyPressed(KEY_DOWN) && !tigrinho->pulando && !tigrinho->abaixado && tigrinho->y == POSICAO_CHAO) {
+            if (IsKeyDown(KEY_DOWN) && !tigrinho->pulando && tigrinho->y == POSICAO_CHAO) {
                 tigrinho->abaixado = 1;
-                tigrinho->tempo_abaixado = 0;
+            } else if (!IsKeyDown(KEY_DOWN)) {
+                tigrinho->abaixado = 0;
+                tigrinho->tempo_abaixado = 0; // Reinicia o tempo ao levantar
             }
 
             atualizar_tigrinho();
@@ -182,10 +199,13 @@ int main() {
             BeginDrawing();
             ClearBackground(RAYWHITE);
 
+            DrawTexture(fundo, 0, 0, WHITE);
+
             DrawText("Jogo do Tigrinho", 20, 20, 20, DARKBLUE);
             DrawText(TextFormat("Pontuacao: %d", pontuacao), 20, 50, 20, BLACK);
             DrawText(TextFormat("Recorde: %d", recorde), 20, 75, 20, GRAY);
             DrawText(TextFormat("Dificuldade: %d", dificuldade), 20, 100, 20, GRAY);
+            DrawText(TextFormat("Velocidade: %.1f", velocidade_jogo), 20, 125, 20, GRAY); // Mostra a velocidade
 
             DrawRectangle(0, POSICAO_CHAO + 40, LARGURA_TELA, 5, DARKGRAY);
 
@@ -210,6 +230,7 @@ int main() {
         while (!WindowShouldClose()) {
             BeginDrawing();
             ClearBackground(RAYWHITE);
+            DrawTexture(fundo, 0, 0, WHITE);
 
             DrawText("GAME OVER", LARGURA_TELA/2 - MeasureText("GAME OVER", 40)/2, ALTURA_TELA/2 - 40, 40, RED);
             DrawText(TextFormat("Pontuacao Final: %d", pontuacao), LARGURA_TELA/2 - MeasureText(TextFormat("Pontuacao Final: %d", pontuacao), 20)/2, ALTURA_TELA/2 + 10, 20, BLACK);
