@@ -5,7 +5,7 @@
 
 #define LARGURA_TELA 800
 #define ALTURA_TELA 450
-#define POSICAO_CHAO (ALTURA_TELA - 80)
+#define POSICAO_CHAO (ALTURA_TELA - 130)
 #define TIGRINHO_X 100
 #define ALTURA_PULO 80
 #define DURACAO_PULO 20
@@ -32,7 +32,7 @@ Obstaculo *lista = NULL;
 int pontuacao = 0;
 int recorde = 0;
 int game_over = 0;
-float velocidade_jogo = 6.0f;
+float velocidade_jogo = 3.0f;
 int dificuldade = 1;
 int mapa[LINHAS][COLUNAS];
 
@@ -172,7 +172,7 @@ int main() {
     SetTargetFPS(60);
     srand(time(NULL));
 
-    Texture2D fundo = LoadTexture("florestapixe.jpg");
+    Texture2D fundo = LoadTexture("/Users/dudu/Documents/GitHub/Projeto-C-tigrinho/fundomesmo.png");
 
     while (!WindowShouldClose()) {
         inicializar_jogo();
@@ -207,7 +207,7 @@ int main() {
             DrawText(TextFormat("Dificuldade: %d", dificuldade), 20, 100, 20, GRAY);
             DrawText(TextFormat("Velocidade: %.1f", velocidade_jogo), 20, 125, 20, GRAY); // Mostra a velocidade
 
-            DrawRectangle(0, POSICAO_CHAO + 40, LARGURA_TELA, 5, DARKGRAY);
+            //DrawRectangle(0, POSICAO_CHAO + 40, LARGURA_TELA, 5, DARKGRAY);
 
             if (tigrinho->abaixado)
                 DrawRectangle(tigrinho->x, tigrinho->y + 20, 40, 20, ORANGE);
