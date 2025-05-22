@@ -53,7 +53,7 @@ void inicializar_jogo() {
 
     pontuacao = 0;
     game_over = 0;
-    velocidade_jogo = 6.0f;
+    velocidade_jogo = 3.5f;
     dificuldade = 1;
 
     FILE *arq = fopen("recorde.txt", "r");
@@ -158,12 +158,12 @@ int verificar_colisao() {
 }
 
 void atualizar_dificuldade() {
-    int nova_dificuldade = 1 + (pontuacao / 500);
+    int nova_dificuldade = 1 + (pontuacao / 1000);
     if (nova_dificuldade > dificuldade) {
         // Aumenta a velocidade em 10%
-        velocidade_jogo *= 1.10f;
+        velocidade_jogo *= 1.01f;
         dificuldade = nova_dificuldade;
-        if (velocidade_jogo > 25.0f) velocidade_jogo = 25.0f; // Limite de velocidade
+        if (velocidade_jogo > 15.0f) velocidade_jogo = 15.0f; // Limite de velocidade
     }
 }
 
