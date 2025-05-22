@@ -172,7 +172,7 @@ int main() {
     SetTargetFPS(60);
     srand(time(NULL));
 
-    Texture2D fundo = LoadTexture("/Users/dudu/Documents/GitHub/Projeto-C-tigrinho/fundomesmo.png");
+    Texture2D fundo = LoadTexture("fundomesmo.png");
 
     while (!WindowShouldClose()) {
         inicializar_jogo();
