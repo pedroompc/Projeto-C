@@ -1,3 +1,4 @@
+
 #include "raylib.h"
 #include <stdlib.h>
 #include <time.h>
@@ -9,7 +10,7 @@
 #define TIGRINHO_X 100
 #define ALTURA_PULO 80
 #define DURACAO_PULO 20
-#define DURACAO_ABAIXADO 10 // Não será mais usado diretamente
+#define DURACAO_ABAIXADO 10
 #define LINHAS 3
 #define COLUNAS 80
 
@@ -35,6 +36,64 @@ int game_over = 0;
 float velocidade_jogo = 3.0f;
 int dificuldade = 1;
 int mapa[LINHAS][COLUNAS];
+
+void inicializar_jogo();
+void atualizar_tigrinho();
+void criar_obstaculo();
+void atualizar_obstaculos();
+int verificar_colisao();
+void atualizar_dificuldade();
+void desenhar_tigrinho_pixelado(int x, int y, int abaixado) {
+    int pixel = 3;
+    int offsetY = abaixado ? 20 : 0;
+    int altura = abaixado ? 20 : 40;
+
+    Color orange = ORANGE;
+    Color preto = BLACK;
+    Color bege = BEIGE;
+    Color branco = WHITE;
+    Color amarelo = YELLOW;
+
+    // Corpo do Tigrinho
+    DrawRectangle(x, y + offsetY, 40, altura, orange);
+
+    // Orelhas (somente em pé)
+    if (!abaixado) {
+        DrawRectangle(x + 4, y + offsetY, pixel * 2, pixel * 2, orange);
+        DrawRectangle(x + 32, y + offsetY, pixel * 2, pixel * 2, orange);
+    }
+
+    // Olhos brancos com pupilas pretas
+    DrawRectangle(x + 10, y + offsetY + 6, pixel * 2, pixel * 2, branco);
+    DrawRectangle(x + 26, y + offsetY + 6, pixel * 2, pixel * 2, branco);
+    DrawRectangle(x + 11, y + offsetY + 7, pixel, pixel, preto);
+    DrawRectangle(x + 27, y + offsetY + 7, pixel, pixel, preto);
+
+    // Listras frontais
+    DrawRectangle(x + 18, y + offsetY + 4, pixel, pixel, preto);
+    DrawRectangle(x + 18, y + offsetY + 10, pixel, pixel, preto);
+
+    // Pintas laterais
+    DrawRectangle(x + 5, y + offsetY + 14, pixel, pixel, preto);
+    DrawRectangle(x + 32, y + offsetY + 14, pixel, pixel, preto);
+
+    // Bigodes laterais
+    DrawRectangle(x + 3, y + offsetY + 18, pixel * 2, pixel, preto);
+    DrawRectangle(x + 35, y + offsetY + 18, pixel * 2, pixel, preto);
+
+    // Focinho bege com nariz preto
+    DrawRectangle(x + 16, y + offsetY + 18, pixel * 2, pixel * 2, bege);
+    DrawRectangle(x + 18, y + offsetY + 20, pixel, pixel, preto);
+
+    // Dentes triangulares brancos
+    DrawTriangle((Vector2){x + 16.0f, y + offsetY + 24.0f},
+                 (Vector2){x + 17.5f, y + offsetY + 28.0f},
+                 (Vector2){x + 19.0f, y + offsetY + 24.0f}, branco);
+
+    DrawTriangle((Vector2){x + 21.0f, y + offsetY + 24.0f},
+                 (Vector2){x + 22.5f, y + offsetY + 28.0f},
+                 (Vector2){x + 24.0f, y + offsetY + 24.0f}, branco);
+}
 
 void inicializar_jogo() {
     tigrinho = (Tigrinho *)malloc(sizeof(Tigrinho));
@@ -82,8 +141,8 @@ void criar_obstaculo() {
     int chance = 35 - dificuldade * 3;
     if (chance < 10) chance = 10;
 
-    int espaco_minimo_entre_obstaculos = 200; // Espaço mínimo desejado entre qualquer obstáculo
-    int largura_obstaculo = 20; // Largura do obstáculo
+    int espaco_minimo_entre_obstaculos = 200;
+    int largura_obstaculo = 20;
 
     Obstaculo *ultimo = NULL;
     for (Obstaculo *o = lista; o != NULL; o = o->prox) {
@@ -92,11 +151,9 @@ void criar_obstaculo() {
 
     int posicao_ultimo_obstaculo = (ultimo != NULL) ? ultimo->x : 0;
 
-    // Verifica se há espaço suficiente para tentar criar um novo obstáculo
     if (LARGURA_TELA - posicao_ultimo_obstaculo > espaco_minimo_entre_obstaculos / 2 + largura_obstaculo) {
         if (GetRandomValue(0, chance) == 0) {
             int pode_criar = 1;
-            // Verifica a distância para todos os obstáculos existentes
             for (Obstaculo *o = lista; o != NULL; o = o->prox) {
                 if (abs(o->x - LARGURA_TELA) < espaco_minimo_entre_obstaculos + largura_obstaculo) {
                     pode_criar = 0;
@@ -111,7 +168,7 @@ void criar_obstaculo() {
 
                 if (GetRandomValue(0, 9) < 3 + dificuldade) {
                     novo->tipo = 'G';
-                    novo->y = POSICAO_CHAO - 30; // Ajuste na posição Y do obstáculo aéreo
+                    novo->y = POSICAO_CHAO - 30;
                 } else {
                     novo->tipo = 'A';
                     novo->y = POSICAO_CHAO;
@@ -139,15 +196,10 @@ void atualizar_obstaculos() {
 
 int verificar_colisao() {
     for (Obstaculo *o = lista; o != NULL; o = o->prox) {
-        // Colisão horizontal
         if (o->x < tigrinho->x + 40 && o->x + 20 > tigrinho->x) {
-            // Colisão com obstáculo baixo ('A')
             if (o->tipo == 'A' && !tigrinho->pulando && tigrinho->y == POSICAO_CHAO) {
                 return 1;
-            }
-            // Colisão com obstáculo alto ('G')
-            else if (o->tipo == 'G' && !tigrinho->abaixado) {
-                // Verifica se a parte superior do tigrinho (parado) está abaixo da parte inferior do obstáculo voador
+            } else if (o->tipo == 'G' && !tigrinho->abaixado) {
                 if (tigrinho->y < o->y + 40) {
                     return 1;
                 }
@@ -160,10 +212,9 @@ int verificar_colisao() {
 void atualizar_dificuldade() {
     int nova_dificuldade = 1 + (pontuacao / 1000);
     if (nova_dificuldade > dificuldade) {
-        // Aumenta a velocidade em 10%
-        velocidade_jogo *= 1.01f;
         dificuldade = nova_dificuldade;
-        if (velocidade_jogo > 15.0f) velocidade_jogo = 15.0f; // Limite de velocidade
+        velocidade_jogo += 0.5f;
+        if (velocidade_jogo > 15.0f) velocidade_jogo = 15.0f;
     }
 }
 
@@ -186,7 +237,7 @@ int main() {
                 tigrinho->abaixado = 1;
             } else if (!IsKeyDown(KEY_DOWN)) {
                 tigrinho->abaixado = 0;
-                tigrinho->tempo_abaixado = 0; // Reinicia o tempo ao levantar
+                tigrinho->tempo_abaixado = 0;
             }
 
             atualizar_tigrinho();
@@ -198,21 +249,15 @@ int main() {
 
             BeginDrawing();
             ClearBackground(RAYWHITE);
-
             DrawTexture(fundo, 0, 0, WHITE);
 
             DrawText("Jogo do Tigrinho", 20, 20, 20, DARKBLUE);
             DrawText(TextFormat("Pontuacao: %d", pontuacao), 20, 50, 20, BLACK);
             DrawText(TextFormat("Recorde: %d", recorde), 20, 75, 20, GRAY);
             DrawText(TextFormat("Dificuldade: %d", dificuldade), 20, 100, 20, GRAY);
-            DrawText(TextFormat("Velocidade: %.1f", velocidade_jogo), 20, 125, 20, GRAY); // Mostra a velocidade
+            DrawText(TextFormat("Velocidade: %.1f", velocidade_jogo), 20, 125, 20, GRAY);
 
-            //DrawRectangle(0, POSICAO_CHAO + 40, LARGURA_TELA, 5, DARKGRAY);
-
-            if (tigrinho->abaixado)
-                DrawRectangle(tigrinho->x, tigrinho->y + 20, 40, 20, ORANGE);
-            else
-                DrawRectangle(tigrinho->x, tigrinho->y, 40, 40, ORANGE);
+            desenhar_tigrinho_pixelado(tigrinho->x, tigrinho->y, tigrinho->abaixado);
 
             for (Obstaculo *o = lista; o != NULL; o = o->prox) {
                 Color cor = (o->tipo == 'A') ? GREEN : DARKGREEN;
@@ -234,7 +279,6 @@ int main() {
 
             DrawText("GAME OVER", LARGURA_TELA/2 - MeasureText("GAME OVER", 40)/2, ALTURA_TELA/2 - 40, 40, RED);
             DrawText(TextFormat("Pontuacao Final: %d", pontuacao), LARGURA_TELA/2 - MeasureText(TextFormat("Pontuacao Final: %d", pontuacao), 20)/2, ALTURA_TELA/2 + 10, 20, BLACK);
-
             const char *mensagem = "Pressione ENTER para jogar novamente ou ESC para sair";
             int largura_texto = MeasureText(mensagem, 20);
             DrawText(mensagem, LARGURA_TELA/2 - largura_texto/2, ALTURA_TELA/2 + 40, 20, GRAY);
