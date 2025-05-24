@@ -1,4 +1,3 @@
-
 #include "raylib.h"
 #include <stdlib.h>
 #include <time.h>
@@ -43,6 +42,7 @@ void criar_obstaculo();
 void atualizar_obstaculos();
 int verificar_colisao();
 void atualizar_dificuldade();
+
 void desenhar_tigrinho_pixelado(int x, int y, int abaixado) {
     int pixel = 3;
     int offsetY = abaixado ? 20 : 0;
@@ -54,45 +54,37 @@ void desenhar_tigrinho_pixelado(int x, int y, int abaixado) {
     Color branco = WHITE;
     Color amarelo = YELLOW;
 
-    // Corpo do Tigrinho
     DrawRectangle(x, y + offsetY, 40, altura, orange);
 
-    // Orelhas (somente em pé)
     if (!abaixado) {
         DrawRectangle(x + 4, y + offsetY, pixel * 2, pixel * 2, orange);
         DrawRectangle(x + 32, y + offsetY, pixel * 2, pixel * 2, orange);
     }
 
-    // Olhos brancos com pupilas pretas
     DrawRectangle(x + 10, y + offsetY + 6, pixel * 2, pixel * 2, branco);
     DrawRectangle(x + 26, y + offsetY + 6, pixel * 2, pixel * 2, branco);
     DrawRectangle(x + 11, y + offsetY + 7, pixel, pixel, preto);
     DrawRectangle(x + 27, y + offsetY + 7, pixel, pixel, preto);
 
-    // Listras frontais
     DrawRectangle(x + 18, y + offsetY + 4, pixel, pixel, preto);
     DrawRectangle(x + 18, y + offsetY + 10, pixel, pixel, preto);
 
-    // Pintas laterais
     DrawRectangle(x + 5, y + offsetY + 14, pixel, pixel, preto);
     DrawRectangle(x + 32, y + offsetY + 14, pixel, pixel, preto);
 
-    // Bigodes laterais
     DrawRectangle(x + 3, y + offsetY + 18, pixel * 2, pixel, preto);
     DrawRectangle(x + 35, y + offsetY + 18, pixel * 2, pixel, preto);
 
-    // Focinho bege com nariz preto
     DrawRectangle(x + 16, y + offsetY + 18, pixel * 2, pixel * 2, bege);
     DrawRectangle(x + 18, y + offsetY + 20, pixel, pixel, preto);
 
-    // Dentes triangulares brancos
     DrawTriangle((Vector2){x + 16.0f, y + offsetY + 24.0f},
-                 (Vector2){x + 17.5f, y + offsetY + 28.0f},
-                 (Vector2){x + 19.0f, y + offsetY + 24.0f}, branco);
+                (Vector2){x + 17.5f, y + offsetY + 28.0f},
+                (Vector2){x + 19.0f, y + offsetY + 24.0f}, branco);
 
     DrawTriangle((Vector2){x + 21.0f, y + offsetY + 24.0f},
-                 (Vector2){x + 22.5f, y + offsetY + 28.0f},
-                 (Vector2){x + 24.0f, y + offsetY + 24.0f}, branco);
+                (Vector2){x + 22.5f, y + offsetY + 28.0f},
+                (Vector2){x + 24.0f, y + offsetY + 24.0f}, branco);
 }
 
 void inicializar_jogo() {
