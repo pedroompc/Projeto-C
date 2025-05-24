@@ -121,10 +121,8 @@ Escolha as instruções para o seu sistema operacional:
 
 ## 📸 Screenshots / Vídeos
 
-*(Adicione aqui uma captura de tela do seu jogo em ação. Se conseguir fazer um GIF curto, é ainda melhor!)*
+![tigrinho_em_pe png](https://github.com/user-attachments/assets/20565df7-2d7e-4179-9b0c-68fd98460af4)
 
-![Screenshot do Jogo do Tigrinho](caminho/para/sua/screenshot.png)
-(Substitua `caminho/para/sua/screenshot.png` pelo caminho da sua imagem dentro do repositório, ex: `assets/screenshot.png`)
 
 ---
 
@@ -137,12 +135,3 @@ Contribuições são bem-vindas! Sinta-se à vontade para:
 
 ---
 
-## 📄 Licença
-
-Este projeto está licenciado sob a licença [MIT License](LICENSE).
-
-*(Crie um arquivo chamado `LICENSE` na raiz do seu projeto com o texto da licença MIT, por exemplo.)*
-
----
-
-**Desenvolvido com Raylib - um motor gráfico simples e fácil de usar!**
