@@ -1,63 +1,148 @@
 # 🐯 Jogo do Tigrinho
 
-Um mini-jogo em C usando **Raylib**, onde você controla um tigrinho que precisa desviar de obstáculos enquanto a velocidade aumenta com a pontuação.
+Um mini-jogo arcade divertido e viciante, desenvolvido em C utilizando a poderosa biblioteca **Raylib**. Controle um tigrinho corajoso em uma corrida infinita, desviando de obstáculos e testando seus reflexos enquanto a velocidade aumenta com sua pontuação!
 
-Ideal para praticar conceitos fundamentais de programação estruturada em C.
+Este projeto é uma excelente prática para consolidar conceitos fundamentais de programação estruturada em C de forma aplicada e interativa.
 
 ---
 
 ## 🎮 Jogabilidade
 
-- O tigrinho corre automaticamente.
-- Desvie de **🌳 árvores (pulando)** e **🌿 galhos (abaixando)**.
-- A pontuação aumenta automaticamente conforme você sobrevive.
-- A dificuldade aumenta gradualmente com o tempo.
+O Tigrinho é um jogo de corrida infinita com foco em reflexos e tempo:
+
+-   O tigrinho corre automaticamente da esquerda para a direita da tela.
+-   Desvie de **🌳 árvores (pulando)** e **🌿 galhos (abaixando)** para sobreviver.
+-   A pontuação aumenta constantemente conforme você sobrevive e avança.
+-   A dificuldade do jogo (velocidade dos obstáculos e frequência) aumenta gradualmente com o tempo, tornando o desafio cada vez maior.
 
 ---
 
 ## 🕹️ Controles
 
-- **Espaço**: Pular
-- **Seta para baixo**: Abaixar
-- **ENTER (após Game Over)**: Jogar novamente
-- **ESC**: Sair do jogo
+Mantenha o tigrinho na linha!
+
+-   **Espaço**: Pular (evita árvores)
+-   **Seta para baixo (↓)**: Abaixar (evita galhos)
+-   **ENTER (após Game Over)**: Iniciar um novo jogo
+-   **ESC**: Sair do jogo a qualquer momento
 
 ---
 
-## 💾 Recorde
+## 📊 Recorde
 
-- O jogo salva automaticamente o **recorde** no arquivo `recorde.txt`.
-- Ao bater o recorde, ele será atualizado automaticamente.
+-   Seus melhores resultados são importantes! O jogo salva automaticamente o **recorde** (maior pontuação atingida) no arquivo `recorde.txt`.
+-   Ao bater seu recorde anterior, ele será atualizado e salvo automaticamente.
 
 ---
 
 ## 🧠 Conceitos de Programação Utilizados
 
-Este projeto foi desenvolvido para aplicar os seguintes conceitos de programação em C:
+Este projeto foi cuidadosamente estruturado para aplicar e demonstrar os seguintes conceitos de programação em C:
 
-| Conceito                | Aplicação no Jogo                                 |
-|------------------------|----------------------------------------------------|
-| **Structs**            | Representação de `Tigrinho` e `Obstaculo`          |
-| **Ponteiros**          | Manipulação do jogador (`Tigrinho*`) e lista       |
-| **Alocação dinâmica**  | Criação dinâmica de obstáculos e do jogador        |
-| **Listas encadeadas**  | Obstáculos são armazenados como lista ligada       |
-| **Matrizes**           | Matriz `mapa[LINHAS][COLUNAS]` como estrutura de apoio |
-| **Leitura/escrita de arquivos** | Salva e carrega o recorde do jogador em `recorde.txt` |
+| Conceito                | Aplicação no Jogo                                                |
+| :---------------------- | :------------------------------------------------------------------ |
+| **Structs**            | Representação de entidades do jogo como `Tigrinho` e `Obstaculo`   |
+| **Ponteiros**          | Manipulação eficiente do jogador (`Tigrinho*`) e elementos da lista de obstáculos. |
+| **Alocação dinâmica**  | Criação dinâmica de obstáculos (`malloc`) conforme o jogo avança e liberação de memória (`free`). |
+| **Listas encadeadas**  | Obstáculos são gerenciados dinamicamente como uma lista ligada, permitindo adição e remoção eficiente. |
+| **Matrizes**           | Utilização da matriz `mapa[LINHAS][COLUNAS]` (ou similar) como estrutura de apoio para lógica de colisões ou posicionamento. |
+| **Leitura/escrita de arquivos** | Persistência do recorde do jogador em `recorde.txt`, demonstrando operações básicas de I/O em arquivo. |
+| **Máquina de Estados (Game States)** | Gerenciamento dos diferentes estados do jogo (Menu, Jogando, Game Over) para controlar a lógica e renderização. |
+| **Manipulação de Texturas** | Uso de imagens (`.png`) para renderizar gráficos mais detalhados para o tigrinho, fundo e obstáculos. |
 
 ---
 
 ## 🛠 Requisitos
 
-- Compilador C (ex: `gcc`, `clang`)
-- [Raylib](https://www.raylib.com/) instalada
+Para compilar e executar o Jogo do Tigrinho, você precisará:
+
+-   Um compilador C (como `gcc` ou `clang`).
+-   A biblioteca **Raylib** instalada em seu sistema.
+
+### Como Instalar a Raylib:
+
+Escolha as instruções para o seu sistema operacional:
+
+-   **Linux (Ubuntu/Debian):**
+    ```bash
+    sudo apt install build-essential
+    sudo apt install libraylib-dev
+    ```
+-   **macOS (com Homebrew):**
+    ```bash
+    brew install raylib
+    ```
+-   **Windows (com MSYS2/MinGW-w64):**
+    1.  Baixe e instale o MSYS2 do site oficial: [https://www.msys2.org/](https://www.msys2.org/)
+    2.  Abra o terminal MSYS2 MinGW 64-bit.
+    3.  Atualize os pacotes: `pacman -Syu`
+    4.  Instale o compilador `gcc` e a Raylib:
+        ```bash
+        pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-raylib
+        ```
 
 ---
 
-## ▶️ Compilação (macOS com Homebrew)
+## ▶️ Como Compilar e Executar
 
-```bash
-gcc jogo_tigrinho.c -o jogo \
--I/opt/homebrew/include \
--L/opt/homebrew/lib \
--lraylib -framework OpenGL -framework Cocoa -framework IOKit
-./jogo
+1.  **Navegue até o diretório do projeto** no seu terminal:
+    ```bash
+    cd /caminho/para/seu/projeto/Jogo-do-Tigrinho
+    ```
+    (Substitua `/caminho/para/seu/projeto/Jogo-do-Tigrinho` pelo caminho real onde você salvou os arquivos do jogo, por exemplo, `~/Projetos/Projeto-C`)
+
+2.  **Compile o jogo** usando o `gcc` e linkando com a Raylib. As flags de compilação podem variar ligeiramente dependendo do seu sistema operacional.
+
+    -   **Para Linux:**
+        ```bash
+        gcc jogo_tigrinho.c -o jogo_tigrinho -lraylib -lm
+        ```
+    -   **Para macOS:**
+        ```bash
+        gcc jogo_tigrinho.c -o jogo_tigrinho \
+        -I/opt/homebrew/include \
+        -L/opt/homebrew/lib \
+        -lraylib -framework OpenGL -framework Cocoa -framework IOKit
+        ```
+        (Se você instalou a Raylib por outro método, os caminhos `-I` e `-L` podem ser diferentes).
+
+    -   **Para Windows (MSYS2 MinGW 64-bit):**
+        ```bash
+        gcc jogo_tigrinho.c -o jogo_tigrinho.exe -lraylib
+        ```
+
+3.  **Execute o jogo:**
+    ```bash
+    ./jogo_tigrinho
+    ```
+    (No Windows, pode ser `.\jogo_tigrinho.exe`)
+
+---
+
+## 📸 Screenshots / Vídeos
+
+*(Adicione aqui uma captura de tela do seu jogo em ação. Se conseguir fazer um GIF curto, é ainda melhor!)*
+
+![Screenshot do Jogo do Tigrinho](caminho/para/sua/screenshot.png)
+(Substitua `caminho/para/sua/screenshot.png` pelo caminho da sua imagem dentro do repositório, ex: `assets/screenshot.png`)
+
+---
+
+## 👨‍💻 Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para:
+
+-   Abrir issues para relatar bugs ou sugerir melhorias.
+-   Submeter Pull Requests com novas funcionalidades ou correções.
+
+---
+
+## 📄 Licença
+
+Este projeto está licenciado sob a licença [MIT License](LICENSE).
+
+*(Crie um arquivo chamado `LICENSE` na raiz do seu projeto com o texto da licença MIT, por exemplo.)*
+
+---
+
+**Desenvolvido com Raylib - um motor gráfico simples e fácil de usar!**
