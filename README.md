@@ -119,19 +119,16 @@ Escolha as instruções para o seu sistema operacional:
 
 ---
 
-## 📸 Screenshots / Vídeos
+## 📸 Screen
 
-![tigrinho_em_pe png](https://github.com/user-attachments/assets/20565df7-2d7e-4179-9b0c-68fd98460af4)
+[![tigrinho_em_pe png](https://github.com/user-attachments/assets/20565df7-2d7e-4179-9b0c-68fd98460af4)](https://youtu.be/44aDXTdaGI8)
 
 
----
-
-## 👨‍💻 Contribuição
-
-Contribuições são bem-vindas! Sinta-se à vontade para:
-
--   Abrir issues para relatar bugs ou sugerir melhorias.
--   Submeter Pull Requests com novas funcionalidades ou correções.
 
 ---
 
+## 👥 Equipe de Desenvolvimento  
+
+- **Pedro Marinho** - [pmpc@cesar.school](mailto:pmpc@cesar.school)  
+- **Ramsés Cordeiro** - [rcfe@cesar.school](mailto:rcfe@cesar.school)  
+- **Eduardo Malheiros** - [emlj@cesar.school](mailto:emlj@cesar.school)  
